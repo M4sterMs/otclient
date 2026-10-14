@@ -1,7 +1,1 @@
-#ifdef ANDROID
-
-extern "C" {
-  #include <game-activity/native_app_glue/android_native_app_glue.c>
-}
-
-#endif
+// The GameActivity glue implementation is provided by game-activity_static.
