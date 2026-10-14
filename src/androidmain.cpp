@@ -23,7 +23,6 @@
 #ifdef ANDROID
 
 #include "framework/platform/androidwindow.h"
-#include <cstdlib>
 
 extern "C" {
 int main(int argc, const char* argv[]);
@@ -43,7 +42,7 @@ void android_main(struct android_app* app) {
 
     const char* args[] = { "OTClient" };
     main(1, args);
-    std::exit(0);
+    return;
 }
 
 #endif
