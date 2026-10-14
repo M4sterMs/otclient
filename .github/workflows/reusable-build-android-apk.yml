@@ -19,7 +19,7 @@ env:
   CMAKE_VERSION: "3.22.1"
   COMPILE_SDK: "36"
   BUILD_TOOLS_VERSION: "36.0.0"
-  CI_ANDROID_ABIS: "arm64-v8a"
+  CI_ANDROID_ABIS: "armeabi-v7a"
   CI_VCPKG_TRIPLET: "arm64-android"
   LUAJIT_COMMIT: "d0e88930ddde28ff662503f9f20facf34f7265aa"
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
