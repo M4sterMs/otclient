@@ -2,6 +2,12 @@ name: Reusable Android APK Build
 
 on:
   workflow_call:
+    inputs:
+      build_type:
+        description: Android Gradle build type
+        required: false
+        type: string
+        default: release
 
 permissions:
   contents: read
@@ -26,7 +32,7 @@ concurrency:
 jobs:
   build:
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
-    name: Android release APK
+    name: Android ${{ inputs.build_type }} APK
     runs-on: ubuntu-latest
 
     steps:
@@ -199,25 +205,25 @@ jobs:
           ANDROID_NDK_HOME: ${{ env.ANDROID_NDK_HOME }}
           OTCLIENT_ANDROID_ABIS: ${{ env.CI_ANDROID_ABIS }}
           VCPKG_ROOT: ${{ env.VCPKG_ROOT }}
-        run: ./gradlew :app:assembleRelease --no-daemon --stacktrace --info
+        run: ./gradlew ":app:assemble${{ inputs.build_type == 'debug' && 'Debug' || 'Release' }}" --no-daemon --stacktrace --info
 
       - name: List APK outputs
-        run: find android/app/build/outputs/apk/release -maxdepth 1 -type f -name "*.apk" -print
+        run: find "android/app/build/outputs/apk/${{ inputs.build_type }}" -maxdepth 1 -type f -name "*.apk" -print
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: otclient-android-release-${{ github.sha }}
-          path: android/app/build/outputs/apk/release/*.apk
+          name: otclient-android-${{ inputs.build_type }}-${{ github.sha }}
+          path: android/app/build/outputs/apk/${{ inputs.build_type }}/*.apk
           if-no-files-found: error
           retention-days: 14
 
       - name: Write download summary
         run: |
           {
-            echo "## Android APK"
+            echo "## Android ${{ inputs.build_type }} APK"
             echo ""
             echo "The APK was uploaded as the workflow artifact:"
             echo ""
-            echo "- otclient-android-release-${GITHUB_SHA}"
+            echo "- otclient-android-${{ inputs.build_type }}-${GITHUB_SHA}"
           } >> "${GITHUB_STEP_SUMMARY}"
