@@ -810,7 +810,7 @@ elseif(ANDROID)
           Vorbis::vorbisfile
           LibLZMA::LibLZMA
           ${LIBARCHIVE_LIBRARY}
-          game-activity::game-activity
+          game-activity::game-activity_static
           GLESv3
           android
           log
