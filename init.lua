@@ -109,6 +109,13 @@ end
 g_logger.setLogFile(g_resources.getWorkDir() .. g_app.getCompactName() .. '.log')
 g_logger.info("Operating system: " .. g_platform.getOSName())
 
+-- Temporary low-resource mode for mobile startup diagnostics.
+local LOW_RESOURCE_MOBILE_MODE = g_platform.isMobile()
+if LOW_RESOURCE_MOBILE_MODE and g_sounds then
+    g_sounds.setAudioEnabled(false)
+    g_logger.info('Low-resource mobile mode: audio disabled.')
+end
+
 -- print first terminal message
 g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' rev ' .. g_app.getBuildRevision() .. ' (' ..
     g_app.getBuildCommit() .. ') built on ' .. g_app.getBuildDate() .. ' for arch ' ..
@@ -157,7 +164,11 @@ g_modules.ensureModuleLoaded('modulelib')
 g_modules.ensureModuleLoaded("startup")
 
 g_modules.autoLoadModules(999)
-g_modules.ensureModuleLoaded('game_shaders') -- pre load
+if not LOW_RESOURCE_MOBILE_MODE then
+    g_modules.ensureModuleLoaded('game_shaders') -- pre load
+else
+    g_logger.info('Low-resource mobile mode: game_shaders disabled.')
+end
 
 local function loadModules()
     -- client modules 100-499
