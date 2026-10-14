@@ -51,7 +51,7 @@ build_luajit() {
         TARGET_LD="${NDKBIN}/${CC_PREFIX}clang" \
         TARGET_AR="$NDKBIN/llvm-ar rcus" \
         TARGET_STRIP="$NDKBIN/llvm-strip" \
-        TARGET_CFLAGS="-fPIC -DLUAJIT_UNWIND_EXTERNAL -fno-stack-protector" \
+        TARGET_CFLAGS="-fPIC -DLUAJIT_UNWIND_EXTERNAL -funwind-tables -fno-stack-protector" \
         BUILDMODE=static
 
     local LIB_DIR="$INSTALL_BASE/lib/$ABI"
