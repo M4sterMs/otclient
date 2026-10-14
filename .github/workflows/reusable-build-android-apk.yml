@@ -218,6 +218,18 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+      - name: Upload Unstripped Native Libraries
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-native-symbols-${{ inputs.build_type }}-${{ github.sha }}
+          path: |
+            android/app/build/intermediates/cmake/${{ inputs.build_type }}/obj/**/*.so
+            android/app/build/intermediates/cmake/Debug/obj/**/*.so
+            android/app/build/intermediates/cxx/**/*.so
+            android/app/.cxx/**/*.so
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Write download summary
         run: |
           {
