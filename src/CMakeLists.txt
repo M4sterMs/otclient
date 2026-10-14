@@ -1106,6 +1106,9 @@ endif(WIN32)
 if(ANDROID)
   set(CMAKE_SHARED_LINKER_FLAGS "-fuse-ld=lld")
   set(CMAKE_EXE_LINKER_FLAGS "-fuse-ld=lld")
+  target_link_options(${PROJECT_NAME} PRIVATE
+          -Wl,-u,Java_com_google_androidgamesdk_GameActivity_initializeNativeCode
+  )
 endif()
 
 # *****************************************************************************
