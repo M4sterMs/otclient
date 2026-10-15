@@ -22,13 +22,16 @@ if (VCPKG_TARGET_ANDROID)
     #
     # 1. Check the presence of environment variable ANDROID_NDK_HOME
     #
-    if (NOT DEFINED ENV{ANDROID_NDK_HOME})
+    set(_ANDROID_NDK_HOME "$ENV{ANDROID_NDK_HOME}")
+    if (NOT _ANDROID_NDK_HOME AND DEFINED CMAKE_ANDROID_NDK)
+        set(_ANDROID_NDK_HOME "${CMAKE_ANDROID_NDK}")
+    elseif (NOT _ANDROID_NDK_HOME AND DEFINED ANDROID_NDK)
+        set(_ANDROID_NDK_HOME "${ANDROID_NDK}")
+    endif()
+    if (NOT _ANDROID_NDK_HOME)
         message(FATAL_ERROR "
-        Please set an environment variable ANDROID_NDK_HOME
-        For example:
-        export ANDROID_NDK_HOME=/home/your-account/Android/Sdk/ndk-bundle
-        Or:
-        export ANDROID_NDK_HOME=/home/your-account/Android/android-ndk-r21b
+        Could not find the Android NDK. Set ANDROID_NDK_HOME or pass
+        CMAKE_ANDROID_NDK/ANDROID_NDK to CMake.
         ")
     endif()
 
@@ -91,7 +94,7 @@ if (VCPKG_TARGET_ANDROID)
     # When using vcpkg, the vcpkg toolchain shall be specified first. 
     # However, vcpkg provides a way to preload and additional toolchain, 
     # with the VCPKG_CHAINLOAD_TOOLCHAIN_FILE option.
-    set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE $ENV{ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake)
+    set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${_ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake")
     set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
     message("vcpkg_android.cmake: CMAKE_TOOLCHAIN_FILE was set to ${CMAKE_TOOLCHAIN_FILE}")
     message("vcpkg_android.cmake: VCPKG_CHAINLOAD_TOOLCHAIN_FILE was set to ${VCPKG_CHAINLOAD_TOOLCHAIN_FILE}")

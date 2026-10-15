@@ -490,7 +490,7 @@ void ThingType::applyAppearanceFlags(const appearances::AppearanceFlags& flags)
 }
 #endif
 
-void ThingType::unserialize(const uint16_t clientId, const ThingCategory category, const FileStreamPtr& fin)
+void ThingType::unserialize(const uint16_t clientId, const ThingCategory category, const FileStreamPtr& fin, const bool pkaDatFormat)
 {
     m_null = false;
     m_id = clientId;
@@ -507,7 +507,30 @@ void ThingType::unserialize(const uint16_t clientId, const ThingCategory categor
             break;
         }
 
-        if (g_game.getClientVersion() >= 1000) {
+        // PokeAlliance stores category-specific payloads in otherwise boolean
+        // attribute slots. Consume them before normal flag conversion so the
+        // following attributes and sprite data remain aligned.
+        if (pkaDatFormat && category == ThingCategoryCreature && attr == 0x2A) {
+            for (int j = 0; j < 16; ++j)
+                fin->getU8();
+            continue;
+        }
+        if (pkaDatFormat && category == ThingCategoryEffect && attr == 0x2B) {
+            for (int j = 0; j < 5; ++j)
+                fin->getU8();
+            continue;
+        }
+
+        if (pkaDatFormat && attr == 8) {
+            attr = ThingAttrChargeable;
+            continue;
+        }
+
+        if (pkaDatFormat && attr > 8 && attr <= 16) {
+            // This DAT retains the pre-8.6 chargeable slot while using the
+            // 10.10+ shifted values for attributes after that legacy range.
+            --attr;
+        } else if (pkaDatFormat || g_game.getClientVersion() >= 1000) {
             /* In 10.10+ all attributes from 16 and up were
              * incremented by 1 to make space for 16 as
              * "No Movement Animation" flag.

@@ -102,6 +102,9 @@ bool ThingTypeManager::loadDat(std::string file)
 
         m_datSignature = fin->getU32();
         m_contentRevision = static_cast<uint16_t>(m_datSignature);
+        const bool pkaDatFormat = m_datSignature == 0xBCBCF8F6;
+        if (pkaDatFormat)
+            g_game.enableFeature(Otc::GameSpritesU32);
 
         for (auto& thingType : m_thingTypes) {
             const int count = fin->getU16() + 1;
@@ -114,7 +117,7 @@ bool ThingTypeManager::loadDat(std::string file)
 
             for (uint16_t id = firstId - 1, s = m_thingTypes[category].size(); ++id < s;) {
                 const auto& type = std::make_shared<ThingType>();
-                type->unserialize(id, static_cast<ThingCategory>(category), fin);
+                type->unserialize(id, static_cast<ThingCategory>(category), fin, pkaDatFormat);
                 m_thingTypes[category][id] = type;
             }
         }

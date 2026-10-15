@@ -53,7 +53,7 @@ public:
     void applyAppearanceFlags(const appearances::AppearanceFlags& flags);
     void unserializeAppearance(uint16_t clientId, ThingCategory category, const appearances::Appearance& appearance);
 #endif
-    void unserialize(uint16_t clientId, ThingCategory category, const FileStreamPtr& fin);
+    void unserialize(uint16_t clientId, ThingCategory category, const FileStreamPtr& fin, bool pkaDatFormat = false);
     void unserializeOtml(const OTMLNodePtr& node);
 
 #ifdef FRAMEWORK_EDITOR
